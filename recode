@@ -1,21 +1,20 @@
 #!/usr/bin/perl
 
-$encodings = " koi win alt ";
 $tbl{koi} = 'áâ÷çäåöúéêëìíîïğòóôõæèãşûıÿùøüàñÁÂ×ÇÄÅÖÚÉÊËÌÍÎÏĞÒÓÔÕÆÈÃŞÛİßÙØÜÀÑ‚ˆƒ¤·§€¡ †Š‡°½´‘’”„‰…ªº­Œ‹¥¸¨¢¶¦±¾µ¯¼²«»®©¹¬';
 $tbl{win} = 'ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿÚÂ¬ÖÒ·¦ÄºÍÃ†´Ç×¶°±²ÛşÀÁÙÓĞ½ÜİŞßÉË»ÕÑ¸ÌÎ¹Æ‡µÈÊ¼ÔÏ¾';
 $tbl{alt} = '€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯àáâãäåæçèéêëìíîïÚÂ¿ÖÒ·³ÄºÍÃÅ´Ç×¶°±²ÛşÀÁÙÓĞ½ÜİŞßÉË»ÕÑ¸ÌÎ¹ÆØµÈÊ¼ÔÏ¾';
 
-$usage = "Usage: $0 -<fromtbl>2<totbl> [file_to_decode]
-where fromtbl and totbl can be koi, win or alt. This script also understands
-if it is being run with name <fromtbl>2<totbl> (e.g. alt2koi). In this case
+$usage = "Usage: $0 -<fromenc>2<toenc> [file_to_decode]
+where fromenc and toenc can be koi, win or alt. This script also understands
+if it is being run with name <fromenc>2<toenc> (e.g. alt2koi). In this case
 it does not check for convert option. If file_to_decode is omitted input is
 being taken from stdin. Output always go to stdout.\n";
 
 $0 =~ /(...)2(...)$/ or shift =~ /^-(...)2(...)$/ or die $usage ;
-$from = lc($1);
-$to = lc($2);
-$encodings =~ / $from / or die "Unsupported encoding : $from\n";
-$encodings =~ / $to /   or die "Unsupported encoding : $to\n";
+$from = $tbl{lc($1)};
+$to = $tbl{lc($2)};
+$from or die "Unsupported encoding : $1\n";
+$to or die "Unsupported encoding : $2\n";
 
 if($input = shift) {
     open(INPUT, "<$input") or die "Could not open \"$input\" : $!\n";
@@ -24,7 +23,7 @@ if($input = shift) {
 }
 
 while(<INPUT>){
-    eval "tr/$tbl{$from}/$tbl{$to}/, 1" or die $@;
+    eval "tr/$from/$to/, 1" or die $@;
     print;
 }
 
